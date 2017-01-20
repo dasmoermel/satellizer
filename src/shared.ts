@@ -1,6 +1,5 @@
 import Config from './config';
 import Storage from './storage';
-import { decodeBase64 } from './utils';
 
 class Shared {
   static $inject = ['$q', '$window', 'SatellizerConfig', 'SatellizerStorage'];
@@ -15,49 +14,37 @@ class Shared {
     this.prefixedTokenName = tokenPrefix ? [tokenPrefix, tokenName].join('_') : tokenName;
   }
 
-  getToken(): string {
-    return this.SatellizerStorage.get(this.prefixedTokenName);
+  /**
+   *
+   * @returns {any}
+   */
+  getToken(): any {
+    let token;
+
+    token = this.SatellizerStorage.get(this.prefixedTokenName);
+    token = JSON.parse(token);
+
+    return token;
   }
 
-  getPayload(): any {
-    const token = this.SatellizerStorage.get(this.prefixedTokenName);
-
-    if (token && token.split('.').length === 3) {
-      try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace('-', '+').replace('_', '/');
-        return JSON.parse(decodeBase64(base64));
-      } catch (e) {
-        // no-op
-      }
-    }
-  }
-
+  /**
+   * Set TokenObject to Storage from Response of httpAuthRequest.
+   * @param response Response from httpAuthRequest
+   */
   setToken(response): void {
-    const tokenRoot = this.SatellizerConfig.tokenRoot;
-    const tokenName = this.SatellizerConfig.tokenName;
-    const accessToken = response && response.access_token;
 
     let token;
 
-    if (accessToken) {
-      if (angular.isObject(accessToken) && angular.isObject(accessToken.data)) {
-        response = accessToken;
-      } else if (angular.isString(accessToken)) {
-        token = accessToken;
-      }
-    }
-
-    if (!token && response) {
-      const tokenRootData = tokenRoot && tokenRoot.split('.').reduce((o, x) => o[x], response.data);
-      token = tokenRootData ? tokenRootData[tokenName] : response.data && response.data[tokenName];
-    }
-
-    if (token) {
+    if (angular.isObject(response.data)) {
+      token = JSON.stringify(response.data);
       this.SatellizerStorage.set(this.prefixedTokenName, token);
     }
+
   }
 
+  /**
+   * Removes TokenObject from Storage
+   */
   removeToken(): void {
     this.SatellizerStorage.remove(this.prefixedTokenName);
   }
@@ -81,10 +68,6 @@ class Shared {
       return true;  // Pass: All other tokens
     }
     return false; // Fail: No token at all
-  }
-
-  logout(): void {
-    this.SatellizerStorage.remove(this.prefixedTokenName);
   }
 
   setStorageType(type): void {

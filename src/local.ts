@@ -16,8 +16,8 @@ class Local {
    * @param options
    * @returns {IPromise<TResult>}
    */
-  login(user: string|Object, options: any = {}): angular.IHttpPromise<any> {
-    options.url = options.url ? options.url : joinUrl(this.SatellizerConfig.baseUrl, this.SatellizerConfig.loginUrl);
+  authenticate(user: string|Object, options: any = {}): angular.IHttpPromise<any> {
+    options.url = options.url ? options.url : joinUrl(this.SatellizerConfig.baseUrl, this.SatellizerConfig.authenticateUrl);
     options.data = user || options.data;
     options.method = options.method || 'POST';
     options.withCredentials = options.withCredentials || this.SatellizerConfig.withCredentials;
@@ -34,14 +34,14 @@ class Local {
    * @param options
    * @returns {IHttpPromise<T>}
    */
-  logout(data: string|Object, options: any = {}): angular.IHttpPromise<any> {
-    options.url = options.url ? options.url : joinUrl(this.SatellizerConfig.baseUrl, this.SatellizerConfig.logoutUrl);
+  revoke(data: string|Object, options: any = {}): angular.IHttpPromise<any> {
+    options.url = options.url ? options.url : joinUrl(this.SatellizerConfig.baseUrl, this.SatellizerConfig.revokeUrl);
     options.data = data || options.data;
     options.method = options.method || 'POST';
     options.withCredentials = options.withCredentials || this.SatellizerConfig.withCredentials;
 
     return this.$http(options).then((response) => {
-      this.SatellizerShared.logout();
+      this.SatellizerShared.removeToken();
       return response;
     });
   }

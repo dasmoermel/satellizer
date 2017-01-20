@@ -1,6 +1,4 @@
 import Config from './config';
-import { IOAuth1Options } from './oauth1';
-import { IOAuth2Options } from './oauth2';
 
 export default class AuthProvider {
   static $inject = ['SatellizerConfig'];
@@ -10,17 +8,11 @@ export default class AuthProvider {
   get baseUrl(): string { return this.SatellizerConfig.baseUrl; }
   set baseUrl(value) { this.SatellizerConfig.baseUrl = value; }
 
-  get loginUrl(): string { return this.SatellizerConfig.loginUrl; }
-  set loginUrl(value) { this.SatellizerConfig.loginUrl = value; }
+  get loginUrl(): string { return this.SatellizerConfig.authenticateUrl; }
+  set loginUrl(value) { this.SatellizerConfig.authenticateUrl = value; }
 
-  get logoutUrl(): string {return this.SatellizerConfig.logoutUrl;}
-  set logoutUrl(value) { this.SatellizerConfig.logoutUrl = value; }
-
-  get signupUrl(): string { return this.SatellizerConfig.signupUrl; }
-  set signupUrl(value) { this.SatellizerConfig.signupUrl = value; }
-
-  get unlinkUrl(): string { return this.SatellizerConfig.unlinkUrl; }
-  set unlinkUrl(value) { this.SatellizerConfig.unlinkUrl = value; }
+  get logoutUrl(): string {return this.SatellizerConfig.revokeUrl;}
+  set logoutUrl(value) { this.SatellizerConfig.revokeUrl = value; }
 
   get tokenRoot(): string { return this.SatellizerConfig.tokenRoot; }
   set tokenRoot(value) { this.SatellizerConfig.tokenRoot = value; }
@@ -52,72 +44,11 @@ export default class AuthProvider {
     }
   }
 
-  facebook(options: IOAuth2Options): void {
-    angular.extend(this.SatellizerConfig.providers.facebook, options);
-  }
-
-  google(options: IOAuth2Options): void {
-    angular.extend(this.SatellizerConfig.providers.google, options);
-  }
-
-  github(options: IOAuth2Options): void {
-    angular.extend(this.SatellizerConfig.providers.github, options);
-  }
-
-  instagram(options: IOAuth2Options): void {
-    angular.extend(this.SatellizerConfig.providers.instagram, options);
-  }
-
-  linkedin(options: IOAuth2Options): void {
-    angular.extend(this.SatellizerConfig.providers.linkedin, options);
-  }
-
-  twitter(options: IOAuth1Options): void {
-    angular.extend(this.SatellizerConfig.providers.twitter, options);
-  }
-
-  twitch(options: IOAuth2Options): void {
-    angular.extend(this.SatellizerConfig.providers.twitch, options);
-  }
-
-  live(options: IOAuth2Options): void {
-    angular.extend(this.SatellizerConfig.providers.live, options);
-  }
-
-  yahoo(options: IOAuth2Options): void {
-    angular.extend(this.SatellizerConfig.providers.yahoo, options);
-  }
-
-  bitbucket(options: IOAuth2Options): void {
-    angular.extend(this.SatellizerConfig.providers.bitbucket, options);
-  }
-
-  spotify(options: IOAuth2Options): void {
-    angular.extend(this.SatellizerConfig.providers.spotify, options);
-  }
-
-  oauth1(options: IOAuth1Options): void {
-    this.SatellizerConfig.providers[options.name] = angular.extend(options, {
-      oauthType: '1.0'
-    });
-  }
-
-  oauth2(options: IOAuth2Options): void {
-    this.SatellizerConfig.providers[options.name] = angular.extend(options, {
-      oauthType: '2.0'
-    });
-  }
-
-  $get(SatellizerShared, SatellizerLocal, SatellizerOAuth): any {
+  $get(SatellizerShared, SatellizerLocal): any {
     return {
-      login: (user, options) => SatellizerLocal.login(user, options),
-      logout: (data, options) => SatellizerLocal.logout(data, options),
-      signup: (user, options) => SatellizerLocal.signup(user, options),
-      authenticate: (name, data) => SatellizerOAuth.authenticate(name, data),
-      link: (name, data) => SatellizerOAuth.authenticate(name, data),
-      unlink: (name, options) => SatellizerOAuth.unlink(name, options),
+      authenticate: (user, options) => SatellizerLocal.authenticate(user, options),
+      revoke: (data, options) => SatellizerLocal.revoke(data, options),
       isAuthenticated: () => SatellizerShared.isAuthenticated(),
-      getPayload: () => SatellizerShared.getPayload(),
       getToken: () => SatellizerShared.getToken(),
       setToken: (token) => SatellizerShared.setToken({ access_token: token }),
       removeToken: () => SatellizerShared.removeToken(),
@@ -126,4 +57,4 @@ export default class AuthProvider {
   }
 }
 
-AuthProvider.prototype.$get.$inject = ['SatellizerShared', 'SatellizerLocal', 'SatellizerOAuth'];
+AuthProvider.prototype.$get.$inject = ['SatellizerShared', 'SatellizerLocal'];
