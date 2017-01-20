@@ -4,7 +4,7 @@ import { decodeBase64 } from './utils';
 
 class Shared {
   static $inject = ['$q', '$window', 'SatellizerConfig', 'SatellizerStorage'];
-  
+
   private prefixedTokenName: string;
 
   constructor(private $q: angular.IQService,
@@ -83,9 +83,8 @@ class Shared {
     return false; // Fail: No token at all
   }
 
-  logout(): angular.IPromise<void> {
+  logout(): void {
     this.SatellizerStorage.remove(this.prefixedTokenName);
-    return this.$q.when();
   }
 
   setStorageType(type): void {

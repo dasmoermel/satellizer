@@ -5,6 +5,7 @@ export default class Config {
 
   baseUrl = '/';
   loginUrl = '/auth/login';
+  logoutUrl = '/auth/logout';
   signupUrl = '/auth/signup';
   unlinkUrl = '/auth/unlink/';
   tokenName = 'token';

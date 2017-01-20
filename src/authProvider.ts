@@ -13,6 +13,9 @@ export default class AuthProvider {
   get loginUrl(): string { return this.SatellizerConfig.loginUrl; }
   set loginUrl(value) { this.SatellizerConfig.loginUrl = value; }
 
+  get logoutUrl(): string {return this.SatellizerConfig.logoutUrl;}
+  set logoutUrl(value) { this.SatellizerConfig.logoutUrl = value; }
+
   get signupUrl(): string { return this.SatellizerConfig.signupUrl; }
   set signupUrl(value) { this.SatellizerConfig.signupUrl = value; }
 
@@ -108,8 +111,8 @@ export default class AuthProvider {
   $get(SatellizerShared, SatellizerLocal, SatellizerOAuth): any {
     return {
       login: (user, options) => SatellizerLocal.login(user, options),
+      logout: (data, options) => SatellizerLocal.logout(data, options),
       signup: (user, options) => SatellizerLocal.signup(user, options),
-      logout: () => SatellizerShared.logout(),
       authenticate: (name, data) => SatellizerOAuth.authenticate(name, data),
       link: (name, data) => SatellizerOAuth.authenticate(name, data),
       unlink: (name, options) => SatellizerOAuth.unlink(name, options),
