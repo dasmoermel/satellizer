@@ -8,11 +8,11 @@ export default class AuthProvider {
   get baseUrl(): string { return this.SatellizerConfig.baseUrl; }
   set baseUrl(value) { this.SatellizerConfig.baseUrl = value; }
 
-  get loginUrl(): string { return this.SatellizerConfig.authenticateUrl; }
-  set loginUrl(value) { this.SatellizerConfig.authenticateUrl = value; }
+  get authenticateUrl(): string { return this.SatellizerConfig.authenticateUrl; }
+  set authenticateUrl(value) { this.SatellizerConfig.authenticateUrl = value; }
 
-  get logoutUrl(): string {return this.SatellizerConfig.revokeUrl;}
-  set logoutUrl(value) { this.SatellizerConfig.revokeUrl = value; }
+  get revokeUrl(): string {return this.SatellizerConfig.revokeUrl;}
+  set revokeUrl(value) { this.SatellizerConfig.revokeUrl = value; }
 
   get tokenRoot(): string { return this.SatellizerConfig.tokenRoot; }
   set tokenRoot(value) { this.SatellizerConfig.tokenRoot = value; }
@@ -46,8 +46,8 @@ export default class AuthProvider {
 
   $get(SatellizerShared, SatellizerLocal): any {
     return {
-      authenticate: (user, options) => SatellizerLocal.authenticate(user, options),
-      revoke: (data, options) => SatellizerLocal.revoke(data, options),
+      authenticate: (user) => SatellizerLocal.authenticate(user),
+      revoke: () => SatellizerLocal.revoke(),
       isAuthenticated: () => SatellizerShared.isAuthenticated(),
       getToken: () => SatellizerShared.getToken(),
       setToken: (token) => SatellizerShared.setToken({ access_token: token }),

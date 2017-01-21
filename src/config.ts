@@ -4,8 +4,8 @@ export default class Config {
   }
 
   baseUrl = '/';
-  authenticateUrl = '/auth/authenticate';
-  revokeUrl = '/auth/revoke';
+  authenticateUrl = '/oauth2/token';
+  revokeUrl = '/oauth2/revoke';
   tokenName = 'token';
   tokenPrefix = 'satellizer';
   tokenHeader = 'Authorization';

@@ -1,5 +1,5 @@
-import Config from './config';
-import Storage from './storage';
+import Config from "./config";
+import Storage from "./storage";
 
 class Shared {
   static $inject = ['$q', '$window', 'SatellizerConfig', 'SatellizerStorage'];
@@ -10,21 +10,16 @@ class Shared {
               private $window: angular.IWindowService,
               private SatellizerConfig: Config,
               private SatellizerStorage: Storage) {
-    const { tokenName, tokenPrefix } = this.SatellizerConfig;
+    const {tokenName, tokenPrefix} = this.SatellizerConfig;
     this.prefixedTokenName = tokenPrefix ? [tokenPrefix, tokenName].join('_') : tokenName;
   }
 
   /**
-   *
+   * Get TokenObject from Storage
    * @returns {any}
    */
   getToken(): any {
-    let token;
-
-    token = this.SatellizerStorage.get(this.prefixedTokenName);
-    token = JSON.parse(token);
-
-    return token;
+    return JSON.parse(this.SatellizerStorage.get(this.prefixedTokenName));
   }
 
   /**
@@ -32,14 +27,9 @@ class Shared {
    * @param response Response from httpAuthRequest
    */
   setToken(response): void {
-
-    let token;
-
     if (angular.isObject(response.data)) {
-      token = JSON.stringify(response.data);
-      this.SatellizerStorage.set(this.prefixedTokenName, token);
+      this.SatellizerStorage.set(this.prefixedTokenName, JSON.stringify(response.data));
     }
-
   }
 
   /**
@@ -47,6 +37,23 @@ class Shared {
    */
   removeToken(): void {
     this.SatellizerStorage.remove(this.prefixedTokenName);
+  }
+
+  getTokensFromObject(): any {
+
+    let data = this.getToken();
+    let tokens: string[] = [];
+
+    if ("access_token" in data) {
+      tokens.push(data['access_token']);
+    }
+
+    if ("refresh_token" in data) {
+      tokens.push(data['refresh_token']);
+    }
+
+    return tokens;
+
   }
 
   isAuthenticated(): boolean {
