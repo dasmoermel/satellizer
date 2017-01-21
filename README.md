@@ -480,8 +480,8 @@ Additionally, **authorization** (obtaining user's information with their permiss
 ### <img height="34" align="top" src="http://tech-lives.com/wp-content/uploads/2012/03/Lock-icon.png"> Login with Email and Password
 
 1. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** Enter your email and password into the login form.
-2. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** On form submit call `$auth.login()` with email and password.
-3. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** Send a `POST` request to `/auth/login`.
+2. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** On form submit call `$auth.authenticate()` with email and password.
+3. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** Send a `POST` request to `/auth/authenticate`.
 4. <img height="24" align="top" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Places-network-server-database-icon.png"> **Server:** Check if email exists, if not - return `401`.
 5. <img height="24" align="top" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Places-network-server-database-icon.png"> **Server:** Check if password is correct, if not - return `401`.
 6. <img height="24" align="top" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Places-network-server-database-icon.png"> **Server:** Create a JSON Web Token and send it back to the client.
@@ -611,10 +611,10 @@ width="150" />
 
 ## API Reference
 
-- [`$auth.login(user, [options])`](#authloginuser-options)
+- [`$auth.authenticate(user, [options])`](#authloginuser-options)
 - [`$auth.signup(user, [options])`](#authsignupuser-options)
 - [`$auth.authenticate(name, [userData])`](#authauthenticatename-userdata)
-- [`$auth.logout()`](#authlogout)
+- [`$auth.revoke()`](#authlogout)
 - [`$auth.isAuthenticated()`](#authisauthenticated)
 - [`$auth.link(name, [userData])`](#authlinkname-userdata)
 - [`$auth.unlink(name, [options])`](#authunlinkname-options)
@@ -624,7 +624,7 @@ width="150" />
 - [`$auth.removeToken()`](#authremovetoken)
 - [`$auth.setStorageType(type)`](#authsetstoragetypetype)
 
-#### `$auth.login(user, [options])`
+#### `$auth.authenticate(user, [options])`
 
 Sign in using Email and Password.
 
@@ -726,7 +726,7 @@ $auth.authenticate('google')
 
 <hr>
 
-#### `$auth.logout()`
+#### `$auth.revoke()`
 
 Deletes a token from Local Storage (or Session Storage).
 
@@ -871,7 +871,7 @@ Saves a JWT or an access token to Local Storage / Session Storage.
 
 #### `$auth.removeToken()`
 
-Removes a token from Local Storage / Session Storage. Used internally by [`$auth.logout()`](#authlogout).
+Removes a token from Local Storage / Session Storage. Used internally by [`$auth.revoke()`](#authlogout).
 
 ##### Usage
 
