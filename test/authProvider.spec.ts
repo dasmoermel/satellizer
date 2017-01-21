@@ -1,10 +1,6 @@
 import Config from '../src/config';
 import Storage from '../src/storage';
 import Shared from '../src/shared';
-import Popup from '../src/popup';
-import OAuth1 from '../src/oauth1';
-import OAuth2 from '../src/oauth2';
-import OAuth from '../src/oauth';
 import Local from '../src/local';
 import AuthProvider from '../src/authProvider';
 
@@ -36,10 +32,6 @@ describe('AuthProvider', () => {
     httpBackend = $httpBackend;
     storage = new Storage($window, config);
     shared = new Shared($q, $window, config, storage);
-    popup = new Popup($interval, $window, $q);
-    oauth1 = new OAuth1($http, $window, config, popup);
-    oauth2 = new OAuth2($http, $window, $timeout, $q, config, popup, storage);
-    oauth = new OAuth($http, $window, $timeout, $q, config, popup, storage, shared, oauth1, oauth2);
     local = new Local($http, config, shared);
     auth = authProvider.$get(shared, local, oauth);
   }));
@@ -49,19 +41,14 @@ describe('AuthProvider', () => {
     expect(authProvider.baseUrl).toEqual('/api/v2/');
   });
 
-  it('should set loginUrl', () => {
-    authProvider.loginUrl = '/api/sign_in';
-    expect(authProvider.loginUrl).toEqual('/api/sign_in');
+  it('should set authenticateUrl', () => {
+    authProvider.authenticateUrl = '/api/sign_in';
+    expect(authProvider.authenticateUrl).toEqual('/api/auth');
   });
 
-  it('should set signupUrl', () => {
-    authProvider.signupUrl = '/api/register';
-    expect(authProvider.signupUrl).toEqual('/api/register');
-  });
-
-  it('should set unlinkUrl', () => {
-    authProvider.unlinkUrl = '/disconnect';
-    expect(authProvider.unlinkUrl).toEqual('/disconnect');
+  it('should set revokeUrl', () => {
+    authProvider.revokeUrl = '/api/sign_in';
+    expect(authProvider.revokeUrl).toEqual('/api/revoke');
   });
 
   it('should set tokenRoot', () => {
@@ -109,42 +96,6 @@ describe('AuthProvider', () => {
       return request.uri.indexOf('/api/') === 0;
     };
     expect(authProvider.httpInterceptor({ uri: '/somewhere/else' })).toEqual(false);
-  });
-
-  it('should set facebook with new params', () => {
-    authProvider.facebook({ clientId: '1234' });
-    expect(config.providers.facebook.clientId).toBe('1234');
-  });
-
-  it('should set google with new params', () => {
-    authProvider.google({ state: 'secret' });
-    expect(config.providers.google.state).toBe('secret');
-  });
-
-  it('should set github with new params', () => {
-    authProvider.github({ clientId: '1234' });
-    expect(config.providers.github.clientId).toBe('1234');
-  });
-
-  it('should set linkedin with new params', () => {
-    authProvider.linkedin({ state: 'secret' });
-    expect(config.providers.linkedin.state).toBe('secret');
-  });
-
-  it('should set twitter with new params', () => {
-    authProvider.twitter({ url: '/api/twitter' });
-    expect(config.providers.twitter.url).toBe('/api/twitter');
-  });
-
-  it('should create new OAuth 2.0 provider', () => {
-    authProvider.oauth2({ name: 'instagram', url: '/auth/instagram' });
-    expect(config.providers.instagram.name).toBe('instagram');
-    expect(config.providers.instagram.url).toBe('/auth/instagram');
-  });
-
-  it('should create new OAuth 1.0 provider', () => {
-    authProvider.oauth1({ name: 'goodreads', url: '/auth/goodreads' });
-    expect(config.providers.goodreads.url).toBe('/auth/goodreads');
   });
 
   describe('$auth service', () => {
@@ -231,96 +182,32 @@ describe('AuthProvider', () => {
 
     });
 
-    describe('getPayload()', () => {
+    describe('revoke()', () => {
 
       it('should be defined', () => {
-        expect(auth.getPayload).toBeDefined();
-      });
-
-      it('should get a JWT payload', () => {
-        const storageType = config.storageType;
-        const tokenName = [config.tokenPrefix, config.tokenName].join('_');
-        window[storageType][tokenName] = token;
-        const payload = auth.getPayload();
-        expect(payload).toBeDefined();
-        expect(angular.isObject(payload)).toBe(true);
-      });
-
-    });
-
-    describe('link()', () => {
-
-      it('should be defined', () => {
-        expect(auth.link).toBeDefined();
-      });
-
-      it('should link third-party provider', () => {
-        spyOn(oauth, 'authenticate');
-        auth.link('facebook');
-        expect(oauth.authenticate).toHaveBeenCalled();
-      });
-
-    });
-
-    describe('unlink()', () => {
-
-      it('should be defined', () => {
-        expect(auth.unlink).toBeDefined();
-      });
-
-      it('should unlink third-party provider', () => {
-        let result = null;
-
-        httpBackend.expectPOST('/auth/unlink/').respond(200);
-
-        auth.unlink('facebook').then((response) => {
-          result = response.status;
-        });
-
-        httpBackend.flush();
-
-        expect(result).toBe(200);
-      });
-
-    });
-
-    describe('logout()', () => {
-
-      it('should be defined', () => {
-        expect(auth.logout).toBeDefined();
+        expect(auth.revoke).toBeDefined();
       });
 
       it('should log out a user', () => {
         const storageType = config.storageType;
         const tokenName = [config.tokenPrefix, config.tokenName].join('_');
-        auth.logout();
+        auth.revoke();
         expect([storageType][tokenName]).toBeUndefined();
       });
 
     });
 
-    describe('login()', () => {
+    describe('authenticate()', () => {
 
       it('should be defined', () => {
-        expect(auth.login).toBeDefined();
+        expect(auth.authenticate).toBeDefined();
       });
 
-      it('should be able to call login', function () {
-        spyOn(local, 'login');
+      it('should be able to call authenticate', function () {
+        spyOn(local, 'authenticate');
         const user = { email: 'foo@bar.com', password: '1234' };
-        auth.login(user);
-        expect(local.login).toHaveBeenCalled();
-      });
-
-      describe('signup()', () => {
-
-        it('should be able to call signup', () => {
-          spyOn(local, 'signup');
-          const user = { email: 'foo@bar.com', password: '1234' };
-          auth.signup(user);
-          expect(local.signup).toHaveBeenCalled();
-        });
-
+        auth.authenticate(user);
+        expect(local.authenticate).toHaveBeenCalled();
       });
 
       describe('setStorageType()', () => {

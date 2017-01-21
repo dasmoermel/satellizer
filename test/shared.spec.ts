@@ -21,17 +21,17 @@ describe('Shared', () => {
     window.sessionStorage.clear();
   });
 
-  describe('logout()', () => {
+  describe('revoke()', () => {
 
     it('should be defined', () => {
-      expect(shared.logout).toBeDefined();
+      expect(shared.revoke).toBeDefined();
     });
 
     it('should log out a user', () => {
       const storageType = config.storageType;
       const tokenName = [config.tokenPrefix, config.tokenName].join('_');
       window[storageType][tokenName] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
-      shared.logout();
+      shared.revoke();
       expect(window[storageType][tokenName]).toBeFalsy();
     });
 

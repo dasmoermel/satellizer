@@ -30,20 +30,20 @@ describe('Local', () => {
     httpBackend.verifyNoOutstandingRequest();
   });
 
-  describe('login()', () => {
+  describe('authenticate()', () => {
 
     it('should be defined', () => {
-      expect(local.login).toBeDefined();
+      expect(local.authenticate).toBeDefined();
     });
 
-    it('should return a user object on successful login', () => {
+    it('should return a user object on successful authenticate', () => {
       let result = null;
       const user = { email: 'john@email.com', password: 'password' };
       const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7Il9pZCI6IjUzZjYxZTEwNmZjNjFhNmMxM2I1Mjc4ZCIsImVtYWlsIjoic2FoYXQ_QG1lLmNvbSIsIl9fdiI6MH0sImlhdCI6MTQwODgyMTA5MTY3NiwiZXhwIjoxNDA5NDI1ODkxNjc2fQ.0l-ql-ZVjHiILMcMegNb3bNqapt3TZwjHy_ieduioiQ';
 
-      httpBackend.expectPOST(config.loginUrl).respond({ token: token });
+      httpBackend.expectPOST(config.authenticateUrl).respond({ token: token });
 
-      local.login(user).then((response) => {
+      local.authenticate(user).then((response) => {
         result = response.data.token;
       });
 
@@ -53,13 +53,13 @@ describe('Local', () => {
       expect(result).toEqual(token);
     });
 
-    it('should fail login with incorrect credentials', () => {
+    it('should fail authenticate with incorrect credentials', () => {
       let result = null;
       const user = { email: 'foo@bar.com', password: 'invalid' };
 
-      httpBackend.expectPOST(config.loginUrl).respond(401, 'Wrong email or password');
+      httpBackend.expectPOST(config.authenticateUrl).respond(401, 'Wrong email or password');
 
-      local.login(user).catch((response) => {
+      local.authenticate(user).catch((response) => {
         result = response.data;
       });
 
